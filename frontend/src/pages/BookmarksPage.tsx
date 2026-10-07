@@ -29,6 +29,7 @@ function BookmarksPage() {
   const [tags, setTags] = createSignal("");
   const [mac, setMac] = createSignal("");
   const [port, setPort] = createSignal(0);
+  const [synced, setSynced] = createSignal(false); // kept in sync by a connector such as Caddy
   const [error, setError] = createSignal("");
 
   const load = async () => {
@@ -54,12 +55,12 @@ function BookmarksPage() {
   const host = () => hosts().find(h => h.Mac == mac());
 
   const reset = () => {
-    setEditID(0); setName(""); setURL(""); setNote(""); setIcon(""); setTags(""); setMac(""); setPort(0); setError("");
+    setEditID(0); setName(""); setURL(""); setNote(""); setIcon(""); setTags(""); setMac(""); setPort(0); setSynced(false); setError("");
   };
 
   const edit = (b: BookmarkInfo) => {
     setEditID(b.ID); setName(b.Name); setURL(b.URL); setNote(b.Note); setIcon(b.Icon);
-    setTags(b.Tags.join(", ")); setMac(b.Mac); setPort(b.Port); setError("");
+    setTags(b.Tags.join(", ")); setMac(b.Mac); setPort(b.Port); setSynced(!!b.Source); setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -75,7 +76,8 @@ function BookmarksPage() {
   };
 
   const remove = async (b: BookmarkInfo) => {
-    if (!confirm("Delete the bookmark \"" + (b.Name || address(b.URL)) + "\"? It also leaves every view it was in.")) return;
+    const more = b.Source ? " Your reverse proxy still serves it, but it won't be added again." : "";
+    if (!confirm("Delete the bookmark \"" + (b.Name || address(b.URL)) + "\"? It also leaves every view it was in." + more)) return;
     await apiDelBookmark(b.ID);
     if (editID() == b.ID) reset();
     load();
@@ -115,7 +117,7 @@ function BookmarksPage() {
           </div>
           <div class="col-md-5">
             <label class="form-label small mb-1" for="bmURL">Address</label>
-            <input class="form-control form-control-sm" id="bmURL" placeholder="https://photos.example.lan" value={url()} onInput={e => setURL(e.target.value)}></input>
+            <input class="form-control form-control-sm" id="bmURL" placeholder="https://photos.example.lan" disabled={synced()} value={url()} onInput={e => setURL(e.target.value)}></input>
           </div>
           <div class="col-md-3">
             <label class="form-label small mb-1" for="bmIcon">Icon</label>
@@ -140,12 +142,12 @@ function BookmarksPage() {
           <div class="col-md-5">
             <label class="form-label small mb-1" for="bmHost">Linked to <span class="opacity-75">(optional)</span></label>
             <div class="d-flex gap-1">
-              <select class="form-select form-select-sm" id="bmHost" value={mac()} onChange={e => { setMac(e.target.value); setPort(0); }}>
+              <select class="form-select form-select-sm" id="bmHost" disabled={synced()} value={mac()} onChange={e => { setMac(e.target.value); setPort(0); }}>
                 <option value="">Nothing</option>
                 <For each={hosts()}>{h => <option value={h.Mac}>{label(h)}</option>}</For>
               </select>
               <Show when={host()}>{h =>
-                <select class="form-select form-select-sm w-auto" aria-label="Service" value={String(port())} onChange={e => setPort(parseInt(e.target.value))}>
+                <select class="form-select form-select-sm w-auto" aria-label="Service" disabled={synced()} value={String(port())} onChange={e => setPort(parseInt(e.target.value))}>
                   <option value="0">The host</option>
                   <For each={h().Web}>{p => <option value={String(p.Port)}>{serviceName(p)} :{p.Port}</option>}</For>
                   <Show when={port() && !h().Web.some(p => p.Port == port())}>
@@ -167,6 +169,9 @@ function BookmarksPage() {
           </Show>
           <Show when={error()}><span class="text-danger small">{error()}</span></Show>
         </div>
+        <Show when={synced()}>
+          <div class="form-text"><i class="bi bi-arrow-repeat me-1"></i>Added from your reverse proxy, which keeps its address and link up to date. The name, icon, note and tags are yours to change.</div>
+        </Show>
         <div class="form-text">
           Linking a bookmark to a discovered host puts it on that host's panel, and a link to one of its services makes that service's tiles open the bookmark's address.
         </div>
@@ -190,6 +195,7 @@ function BookmarksPage() {
                   <td class="bookmark-icon"><AppIcon icon={b.Icon} title={b.Name} guess={true} fallback="bi-bookmark"></AppIcon></td>
                   <td>
                     <a href={b.URL} target="_blank">{b.Name || address(b.URL)}</a>
+                    <Show when={b.Source}><i class="bi bi-arrow-repeat ms-1 opacity-50" title="Kept in sync by your reverse proxy"></i></Show>
                     <div class="small opacity-75">{b.Note || address(b.URL)}</div>
                   </td>
                   <td>

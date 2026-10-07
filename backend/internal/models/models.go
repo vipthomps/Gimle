@@ -222,6 +222,11 @@ type Bookmark struct {
 	Note string `gorm:"column:NOTE"` // shown under the name instead of the address
 	Mac  string `gorm:"column:MAC"`  // linked host, "" for none
 	Port int    `gorm:"column:PORT"` // linked service on that host, 0 for the host itself
+	// Source is the connector that keeps this bookmark in sync, 0 for one added
+	// by hand. Its address and link follow the connector; deleting it hides it
+	// so the next sync doesn't bring it back.
+	Source int  `gorm:"column:SOURCE"`
+	Hidden bool `gorm:"column:HIDDEN" json:"-"`
 }
 
 // BookmarkInfo - a bookmark with its tags and what it is linked to
@@ -352,7 +357,7 @@ type Stats struct {
 // Connector - another system Gimlé reads hosts, names, services or containers from
 type Connector struct {
 	ID        int    `gorm:"column:ID;primaryKey"`
-	Kind      string `gorm:"column:KIND"` // "docker", "dockhand", "scanopy", "unifi", "technitium" or "proxmox"
+	Kind      string `gorm:"column:KIND"` // "docker", "dockhand", "scanopy", "unifi", "technitium", "proxmox" or "caddy"
 	Name      string `gorm:"column:NAME"`
 	URL       string `gorm:"column:URL"`
 	Token     string `gorm:"column:TOKEN" json:"-"` // API key or token, never sent to the browser

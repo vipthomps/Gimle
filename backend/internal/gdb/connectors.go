@@ -58,6 +58,11 @@ func DeleteConnector(id int) {
 	check.IfError(err)
 	err = db.Table("guests").Where("\"CONNECTOR_ID\" = ?", id).Delete(&models.Guest{}).Error
 	check.IfError(err)
+	var ids []int
+	for _, b := range SelectSourceBookmarks(id) {
+		ids = append(ids, b.ID)
+	}
+	DeleteSourceBookmarks(id, ids)
 }
 
 // ReplaceContainers - store what a connector reported, replacing its last report

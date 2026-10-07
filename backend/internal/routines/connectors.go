@@ -66,7 +66,7 @@ func SyncConnector(c models.Connector) error {
 		errText = err.Error()
 	}
 	gdb.SetConnectorResult(c.ID, now, errText, matched)
-	slog.Info("Connector synced", "connector", c.Name, "hosts", len(snap.Hosts), "matched", matched)
+	slog.Info("Connector synced", "connector", c.Name, "hosts", len(snap.Hosts), "sites", len(snap.Sites), "matched", matched)
 	return err
 }
 
@@ -151,6 +151,10 @@ func applySnapshot(c models.Connector, snap connectors.Snapshot, now string) (ma
 			wantPorts[key] = p
 			probe[h.Mac] = h
 		}
+	}
+
+	if c.Kind == "caddy" {
+		return applySites(c, snap.Sites, byIP)
 	}
 
 	if c.Kind == "proxmox" {

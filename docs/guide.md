@@ -40,8 +40,32 @@ Config → Connectors reads from other systems on your network. Each one only re
 | UniFi console | `https://192.168.1.1` | an API key from UniFi Network → Settings → Control Plane → Integrations | Client aliases, DHCP host names and fixed IPs |
 | Technitium DNS | `http://host:5380` | an API token | DHCP lease host names and the A records of local zones |
 | Proxmox VE | `https://host:8006` | an API token as `USER@REALM!TOKENID=SECRET` with the PVEAuditor role on `/` | Every VM and LXC with its node, VMID, status, MAC and IP |
+| Caddy | `http://host:2020`, a read-only proxy of its admin API (below) | optional | A bookmark for every site it reverse proxies, linked to the host and service behind it |
 
 Reported hosts are matched to scanned ones by MAC address, then IP. A connector only fills in names that are still empty, never overwrites one you typed. Published container ports become services you can tag, named after the container (or the page title, once read). The host panel and host page list a host's containers, running first.
+
+### Caddy
+
+The Caddy connector reads Caddy's running config and adds a bookmark for every site name that ends in a `reverse_proxy`, such as `https://photos.example.lan`. Each one is linked to the host and port it forwards to, so tiles for that service open the proxy name instead of the IP. Upstreams on `localhost` count as the machine running Caddy (set **Caddy host IP** if the connector URL doesn't point at it), and an upstream named after a Docker container, like `immich-server:2283`, is matched to that container's host and published port when a Docker connector knows it.
+
+Caddy owns each bookmark's address and link and updates them on every sync; the name, icon, note and tags are yours. A bookmark whose site leaves Caddy is removed. Delete one you don't want and it stays deleted. An address you already bookmarked by hand is left alone.
+
+Caddy's admin API listens on `localhost:2019`, has no login, and can change Caddy's config, so don't open it to the network. Instead add a site that passes only `GET /config/` through, and point the connector at it:
+
+```
+:2020 {
+	@read method GET
+	handle @read {
+		rewrite * /config/
+		reverse_proxy localhost:2019 {
+			header_up Host localhost:2019
+		}
+	}
+	respond 403
+}
+```
+
+Anyone who can reach port 2020 can read your Caddy config, which can include secrets such as DNS provider tokens, so limit it to Gimle's address with a `remote_ip` matcher or a firewall rule if that matters on your network.
 
 ## Suggested categories
 

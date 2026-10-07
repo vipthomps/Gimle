@@ -340,6 +340,7 @@ export interface Bookmark {
 	Note: string;
 	Mac:  string; // linked host, "" for none
 	Port: number; // linked service, 0 for the host itself
+	Source?: number; // connector that keeps it in sync, 0 for one added by hand
 };
 
 export interface BookmarkInfo extends Bookmark {

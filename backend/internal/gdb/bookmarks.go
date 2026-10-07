@@ -12,7 +12,7 @@ import (
 
 // SelectBookmarks - every bookmark, by name
 func SelectBookmarks() (list []models.Bookmark) {
-	err := db.Table("bookmarks").Order("\"ID\"").Find(&list).Error
+	err := db.Table("bookmarks").Where("\"HIDDEN\" IS NOT TRUE").Order("\"ID\"").Find(&list).Error
 	check.IfError(err)
 	sort.SliceStable(list, func(i, j int) bool { return strings.ToLower(list[i].Name) < strings.ToLower(list[j].Name) })
 	return list
@@ -67,13 +67,47 @@ func SaveBookmark(b *models.Bookmark, tags []string) error {
 	})
 }
 
-// DeleteBookmark - delete a bookmark and its tags
+// DeleteBookmark - delete a bookmark and its tags. One a connector keeps in
+// sync is hidden instead, so the next sync doesn't add it again.
 func DeleteBookmark(id int) {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Table("items").Where("\"KIND\" = ? AND \"BOOKMARK\" = ?", "bookmark", id).Delete(&models.Item{}).Error; err != nil {
 			return err
 		}
+		var b models.Bookmark
+		if err := tx.Table("bookmarks").First(&b, id).Error; err != nil {
+			return nil
+		}
+		if b.Source != 0 {
+			return tx.Table("bookmarks").Where("\"ID\" = ?", id).Update("HIDDEN", true).Error
+		}
 		return tx.Table("bookmarks").Delete(&models.Bookmark{}, id).Error
+	})
+	check.IfError(err)
+}
+
+// SelectSourceBookmarks - the bookmarks a connector keeps, hidden ones too
+func SelectSourceBookmarks(source int) (list []models.Bookmark) {
+	err := db.Table("bookmarks").Where("\"SOURCE\" = ?", source).Order("\"ID\"").Find(&list).Error
+	check.IfError(err)
+	return list
+}
+
+// SaveSourceBookmark - create or update a bookmark a connector keeps, leaving its tags alone
+func SaveSourceBookmark(b *models.Bookmark) error {
+	return db.Table("bookmarks").Save(b).Error
+}
+
+// DeleteSourceBookmarks - remove bookmarks a connector kept, with their tags
+func DeleteSourceBookmarks(source int, ids []int) {
+	if len(ids) == 0 {
+		return
+	}
+	err := db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Table("items").Where("\"KIND\" = ? AND \"BOOKMARK\" IN ?", "bookmark", ids).Delete(&models.Item{}).Error; err != nil {
+			return err
+		}
+		return tx.Table("bookmarks").Where("\"SOURCE\" = ? AND \"ID\" IN ?", source, ids).Delete(&models.Bookmark{}).Error
 	})
 	check.IfError(err)
 }

@@ -32,6 +32,12 @@ definitions:
       port:
         description: linked service on that host, 0 for the host itself
         type: integer
+      source:
+        description: |-
+          Source is the connector that keeps this bookmark in sync, 0 for one added
+          by hand. Its address and link follow the connector; deleting it hides it
+          so the next sync doesn't bring it back.
+        type: integer
       tags:
         items:
           type: string
@@ -170,6 +176,12 @@ definitions:
       port:
         description: linked service on that host, 0 for the host itself
         type: integer
+      source:
+        description: |-
+          Source is the connector that keeps this bookmark in sync, 0 for one added
+          by hand. Its address and link follow the connector; deleting it hides it
+          so the next sync doesn't bring it back.
+        type: integer
       url:
         type: string
     type: object
@@ -196,6 +208,12 @@ definitions:
         type: string
       port:
         description: linked service on that host, 0 for the host itself
+        type: integer
+      source:
+        description: |-
+          Source is the connector that keeps this bookmark in sync, 0 for one added
+          by hand. Its address and link follow the connector; deleting it hides it
+          so the next sync doesn't bring it back.
         type: integer
       tags:
         items:
@@ -333,7 +351,8 @@ definitions:
         description: minutes between syncs
         type: integer
       kind:
-        description: '"docker", "dockhand", "scanopy", "unifi", "technitium" or "proxmox"'
+        description: '"docker", "dockhand", "scanopy", "unifi", "technitium", "proxmox"
+          or "caddy"'
         type: string
       lastCount:
         description: hosts the last sync matched
@@ -373,7 +392,8 @@ definitions:
         description: minutes between syncs
         type: integer
       kind:
-        description: '"docker", "dockhand", "scanopy", "unifi", "technitium" or "proxmox"'
+        description: '"docker", "dockhand", "scanopy", "unifi", "technitium", "proxmox"
+          or "caddy"'
         type: string
       lastCount:
         description: hosts the last sync matched

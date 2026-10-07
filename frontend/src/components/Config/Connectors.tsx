@@ -8,6 +8,7 @@ const help: Record<string, string> = {
   scanopy: "Imports host names, detected services and containers. Needs a Scanopy user API key (scp_u_...) from Platform > API Keys.",
   unifi: "Reads client names, DHCP host names, fixed IPs and addresses from a UniFi OS console such as a Dream Machine. Make an API key under UniFi Network > Settings > Control Plane > Integrations. Consoles use a self-signed certificate.",
   proxmox: "Reads every VM and LXC with its node, VMID, status and MAC address, so guests show inside their Proxmox host on the map. Make an API token under Datacenter > Permissions > API Tokens and give it the PVEAuditor role on /. Enter it as USER@REALM!TOKENID=SECRET, for example root@pam!gimle=1234-abcd. Node IP is only needed when the URL does not point at the node itself.",
+  caddy: "Turns every site Caddy reverse proxies into a bookmark, linked to the host and service it forwards to, so tiles open the proxy name instead of the IP. Caddy's admin API listens on localhost:2019 and can change Caddy's config, so don't open it to the network: add a read-only proxy of GET /config/ to your Caddyfile (see the guide) and point the URL at that. Caddy host IP is only needed when the URL does not point at the machine running Caddy; it is where upstreams on localhost run. You can rename, tag or delete the bookmarks it adds; deleted ones stay away.",
   technitium: "Reads DHCP leases and the A records of local zones, so hosts get their DNS names. Make an API token under Administration > Sessions > Create Token.",
 };
 
@@ -80,7 +81,7 @@ function Connectors() {
       <div class="card-body">
         <Show when={!form()}>
           <For each={list()} fallback={
-            <p class="small opacity-75 mb-0">Read VMs and LXCs from Proxmox, containers from Docker or Dockhand, and names and services from Scanopy, a UniFi console or Technitium DNS. Each connector only reads.</p>
+            <p class="small opacity-75 mb-0">Read VMs and LXCs from Proxmox, containers from Docker or Dockhand, names and services from Scanopy, a UniFi console or Technitium DNS, and bookmarks from Caddy. Each connector only reads.</p>
           }>{c =>
             <div class="connector-row">
               <div class="me-auto">
@@ -90,7 +91,7 @@ function Connectors() {
                 <div class="small">
                   <Show when={c.LastSync} fallback={<span class="opacity-75">Not synced yet</span>}>
                     <Show when={c.LastError} fallback={
-                      <span class="text-success"><i class="bi bi-check-circle me-1"></i>{c.LastCount} hosts matched, {c.LastSync}</span>
+                      <span class="text-success"><i class="bi bi-check-circle me-1"></i>{c.LastCount} {c.Kind == "caddy" ? "sites linked to hosts" : "hosts matched"}, {c.LastSync}</span>
                     }>
                       <span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>{c.LastError}</span>
                     </Show>
@@ -138,9 +139,9 @@ function Connectors() {
                   </div>
                 </Show>
               </div>
-              <Show when={form()!.Kind == "docker" || form()!.Kind == "proxmox"}>
+              <Show when={form()!.Kind == "docker" || form()!.Kind == "proxmox" || form()!.Kind == "caddy"}>
                 <div class="col-sm-6">
-                  <label class="form-label small mb-1" for="connHost">{form()!.Kind == "docker" ? "Docker host IP" : "Node IP"} <span class="opacity-75">(optional)</span></label>
+                  <label class="form-label small mb-1" for="connHost">{{ docker: "Docker host IP", proxmox: "Node IP", caddy: "Caddy host IP" }[form()!.Kind]} <span class="opacity-75">(optional)</span></label>
                   <input class="form-control form-control-sm" id="connHost" value={form()!.HostIP} onInput={e => set("HostIP", e.target.value)}></input>
                 </div>
               </Show>

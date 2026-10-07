@@ -1,6 +1,6 @@
 // Package connectors reads hosts, names, services, containers and guests from
 // other systems on the network: the Docker API, Dockhand, Scanopy, a UniFi
-// console, Technitium DNS and Proxmox VE. Every connector is read-only.
+// console, Technitium DNS, Proxmox VE and Caddy. Every connector is read-only.
 package connectors
 
 import (
@@ -26,6 +26,7 @@ var Kinds = map[string]KindInfo{
 	"unifi":      {Label: "UniFi console", Token: "required", Example: "https://192.168.1.1"},
 	"technitium": {Label: "Technitium DNS", Token: "required", Example: "http://192.168.1.53:5380"},
 	"proxmox":    {Label: "Proxmox VE", Token: "required", Example: "https://192.168.1.2:8006"},
+	"caddy":      {Label: "Caddy", Token: "optional", Example: "http://192.168.1.30:2020"},
 }
 
 // KindInfo - how the config page describes a connector kind
@@ -38,6 +39,16 @@ type KindInfo struct {
 // Snapshot - what one sync found
 type Snapshot struct {
 	Hosts []Host
+	Sites []Site // names a reverse proxy serves, which become bookmarks
+}
+
+// Site - a name a reverse proxy serves and where it forwards to
+type Site struct {
+	Name     string // photos.example.lan
+	URL      string // https://photos.example.lan
+	Upstream string // as the proxy has it, like 10.0.0.5:2283
+	IP       string // upstream IP, "" when it can't be resolved from here
+	Port     int
 }
 
 // Host - a host as another system sees it. Mac or IP identifies it.
@@ -75,6 +86,8 @@ func Fetch(ctx context.Context, c models.Connector) (Snapshot, error) {
 		return fetchTechnitium(ctx, cl, c)
 	case "proxmox":
 		return fetchProxmox(ctx, cl, c)
+	case "caddy":
+		return fetchCaddy(ctx, cl, c)
 	}
 	return Snapshot{}, fmt.Errorf("unknown connector kind %q", c.Kind)
 }
