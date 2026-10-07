@@ -1902,6 +1902,10 @@ const docTemplate = `{
                     "description": "linked service on that host, 0 for the host itself",
                     "type": "integer"
                 },
+                "source": {
+                    "description": "Source is the connector that keeps this bookmark in sync, 0 for one added\nby hand. Its address and link follow the connector; deleting it hides it\nso the next sync doesn't bring it back.",
+                    "type": "integer"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -2107,6 +2111,10 @@ const docTemplate = `{
                     "description": "linked service on that host, 0 for the host itself",
                     "type": "integer"
                 },
+                "source": {
+                    "description": "Source is the connector that keeps this bookmark in sync, 0 for one added\nby hand. Its address and link follow the connector; deleting it hides it\nso the next sync doesn't bring it back.",
+                    "type": "integer"
+                },
                 "url": {
                     "type": "string"
                 }
@@ -2143,6 +2151,10 @@ const docTemplate = `{
                 },
                 "port": {
                     "description": "linked service on that host, 0 for the host itself",
+                    "type": "integer"
+                },
+                "source": {
+                    "description": "Source is the connector that keeps this bookmark in sync, 0 for one added\nby hand. Its address and link follow the connector; deleting it hides it\nso the next sync doesn't bring it back.",
                     "type": "integer"
                 },
                 "tags": {
@@ -2335,7 +2347,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "description": "\"docker\", \"dockhand\", \"scanopy\", \"unifi\", \"technitium\" or \"proxmox\"",
+                    "description": "\"docker\", \"dockhand\", \"scanopy\", \"unifi\", \"technitium\", \"proxmox\" or \"caddy\"",
                     "type": "string"
                 },
                 "lastCount": {
@@ -2392,7 +2404,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "kind": {
-                    "description": "\"docker\", \"dockhand\", \"scanopy\", \"unifi\", \"technitium\" or \"proxmox\"",
+                    "description": "\"docker\", \"dockhand\", \"scanopy\", \"unifi\", \"technitium\", \"proxmox\" or \"caddy\"",
                     "type": "string"
                 },
                 "lastCount": {

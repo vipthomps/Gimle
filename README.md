@@ -8,7 +8,7 @@ A home lab dashboard that finds the devices on your network and lays them out as
 
 - **Discovers hosts** on the subnets you choose (arp-scan), names them from DNS, mDNS and NetBIOS, and checks their open ports and web pages.
 - **Maps them**, either laid out by hand or as an automatic topology with Docker containers and Proxmox guests inside their hosts.
-- **Reads other systems** you may already run: Docker, Dockhand, Scanopy, UniFi, Technitium DNS and Proxmox VE (read only).
+- **Reads other systems** you may already run: Docker, Dockhand, Scanopy, UniFi, Technitium DNS and Proxmox VE (read only), and turns the sites Caddy proxies into bookmarks.
 - **Replaces a homepage** like Dashy: bookmarks with tags, views of tiles or maps, and a start page of your choice.
 - **Shows uptime** and how full each subnet is, over up to 90 days.
 - **Shows your docs**: Markdown pages kept in a GitHub repository, editable from Gimle when you give it a token.

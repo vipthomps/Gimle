@@ -68,10 +68,16 @@ func saveBookmark(c *gin.Context) {
 		badRequest(c, err)
 		return
 	}
+	b.Source = 0
 	if b.ID != 0 {
-		if _, ok := gdb.SelectBookmark(b.ID); !ok {
+		old, ok := gdb.SelectBookmark(b.ID)
+		if !ok {
 			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "bookmark not found"})
 			return
+		}
+		if old.Source != 0 {
+			// the connector keeps the address and link; the rest is yours
+			b.Source, b.URL, b.Mac, b.Port = old.Source, old.URL, old.Mac, old.Port
 		}
 	}
 	if err := gdb.SaveBookmark(&b, cleanTags(in.Tags)); err != nil {
