@@ -57,6 +57,7 @@ func Gui() {
 	templ := template.Must(template.New("").ParseFS(templFS, "templates/*"))
 	router.SetHTMLTemplate(templ) // templates
 
+	router.Use(cacheHeaders)
 	router.StaticFS("/fs/", http.FS(pubFS)) // public
 
 	router.GET("/", indexHandler)            // index.go

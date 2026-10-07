@@ -6,9 +6,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        // index.js and index.css keep fixed names because the page links
+        // them; the server tells browsers to check them on every load. Page
+        // chunks carry a hash so a new version never mixes with a cached one.
         entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        chunkFileNames: `assets/[name]-[hash].js`,
+        assetFileNames: info => info.names?.[0] == 'index.css' ? `assets/[name].[ext]` : `assets/[name]-[hash].[ext]`
       }
     }
   }
