@@ -1,0 +1,32 @@
+version: 2
+project_name: gimle
+
+builds:
+  - id: gimle
+    dir: backend
+    main: ./cmd/gimle
+    binary: gimle
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath]
+    ldflags: [-s -w]
+    goos: [linux]
+    goarch: [amd64, arm64, arm]
+    goarm: ["7"]
+
+archives:
+  - id: gimle
+    # fixed names, so .../releases/latest/download/gimle_linux_amd64.tar.gz always works
+    name_template: "gimle_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    files:
+      - LICENSE
+      - README.md
+      - src: proxmox/update.sh
+        dst: update.sh
+      - src: backend/configs/gimle.service
+        dst: gimle.service
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  use: github-native

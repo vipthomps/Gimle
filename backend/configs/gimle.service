@@ -1,0 +1,11 @@
+[Unit]
+Description=Gimle home lab dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/gimle -d /var/lib/gimle
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

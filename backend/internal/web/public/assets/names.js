@@ -1,0 +1,1 @@
+function r(t){const e=(t||"").trim().split(/\s+/)[0].replace(/\.$/,"");if(/^\d+\.\d+\.\d+\.\d+$/.test(e)||e.includes(":"))return e;const n=e.indexOf(".");return n>0?e.slice(0,n):e}function i(t,e="Unnamed"){return t.Name||r(t.DNS)||t.Hw||e}function s(t,e="Web"){return t.Title||t.Container||t.Service||e}export{i as h,s};

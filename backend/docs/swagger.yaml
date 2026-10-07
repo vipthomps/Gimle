@@ -1,0 +1,2204 @@
+basePath: /api/
+definitions:
+  api.backupList:
+    properties:
+      backups:
+        items:
+          $ref: '#/definitions/backup.Backup'
+        type: array
+      dir:
+        type: string
+      enabled:
+        description: false when the data is in PostgreSQL
+        type: boolean
+      error:
+        type: string
+    type: object
+  api.bookmarkInput:
+    properties:
+      icon:
+        description: as in Icon; "" uses the linked host's or service's
+        type: string
+      id:
+        type: integer
+      mac:
+        description: linked host, "" for none
+        type: string
+      name:
+        type: string
+      note:
+        description: shown under the name instead of the address
+        type: string
+      port:
+        description: linked service on that host, 0 for the host itself
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      url:
+        type: string
+    type: object
+  api.docSave:
+    properties:
+      markdown:
+        type: string
+      message:
+        description: commit message; one is made up when empty
+        type: string
+      path:
+        type: string
+      sha:
+        description: the blob the edit started from; "" creates a new page
+        type: string
+    type: object
+  api.docsIndex:
+    properties:
+      branch:
+        type: string
+      canEdit:
+        type: boolean
+      dir:
+        type: string
+      error:
+        type: string
+      nav:
+        items:
+          $ref: '#/definitions/docsource.NavItem'
+        type: array
+      repo:
+        type: string
+    type: object
+  api.docsSettings:
+    properties:
+      branch:
+        type: string
+      clearToken:
+        type: boolean
+      dir:
+        type: string
+      edit:
+        type: boolean
+      repo:
+        description: owner/name, or the repository's GitHub address
+        type: string
+      token:
+        description: '"" keeps the saved token'
+        type: string
+    type: object
+  backup.Backup:
+    properties:
+      kind:
+        type: string
+      name:
+        type: string
+      size:
+        format: int64
+        type: integer
+      time:
+        type: string
+    type: object
+  connectors.KindInfo:
+    properties:
+      example:
+        type: string
+      label:
+        type: string
+      token:
+        description: '"required" or "optional"'
+        type: string
+    type: object
+  docsource.NavItem:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/docsource.NavItem'
+        type: array
+      path:
+        type: string
+      title:
+        type: string
+    type: object
+  docsource.Page:
+    properties:
+      gitHub:
+        description: the file on GitHub
+        type: string
+      html:
+        type: string
+      markdown:
+        type: string
+      path:
+        type: string
+      sha:
+        description: blob being shown; sent back on save to catch edits made elsewhere
+        type: string
+      title:
+        type: string
+    type: object
+  models.Address:
+    properties:
+      hostID:
+        type: integer
+      ip:
+        type: string
+      mac:
+        type: string
+      name:
+        type: string
+      reserved:
+        type: boolean
+      state:
+        description: network, broadcast, online, offline, reserved, free
+        type: string
+    type: object
+  models.Bookmark:
+    properties:
+      icon:
+        description: as in Icon; "" uses the linked host's or service's
+        type: string
+      id:
+        type: integer
+      mac:
+        description: linked host, "" for none
+        type: string
+      name:
+        type: string
+      note:
+        description: shown under the name instead of the address
+        type: string
+      port:
+        description: linked service on that host, 0 for the host itself
+        type: integer
+      url:
+        type: string
+    type: object
+  models.BookmarkInfo:
+    properties:
+      hostID:
+        description: 0 when not linked, or the host is gone
+        type: integer
+      hostName:
+        description: linked host's name or IP
+        type: string
+      icon:
+        description: as in Icon; "" uses the linked host's or service's
+        type: string
+      id:
+        type: integer
+      mac:
+        description: linked host, "" for none
+        type: string
+      name:
+        type: string
+      note:
+        description: shown under the name instead of the address
+        type: string
+      port:
+        description: linked service on that host, 0 for the host itself
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      url:
+        type: string
+    type: object
+  models.Conf:
+    properties:
+      arpArgs:
+        type: string
+      arpStrs:
+        items:
+          type: string
+        type: array
+      color:
+        type: string
+      confPath:
+        type: string
+      dbpath:
+        type: string
+      dirPath:
+        type: string
+      dnsserver:
+        description: Host names
+        type: string
+      docsAPI:
+        description: GitHub API URL; only GitHub Enterprise needs it, set in the config
+          file
+        type: string
+      docsBranch:
+        description: '"" for the repository''s default branch'
+        type: string
+      docsDir:
+        description: folder inside the repository, "" for the root
+        type: string
+      docsEdit:
+        description: let Gimle commit edits with the token
+        type: boolean
+      docsHasToken:
+        description: a token is saved
+        type: boolean
+      docsRepo:
+        description: 'Docs: Markdown pages read from a folder in a GitHub repository'
+        type: string
+      docsTokenEnv:
+        description: the token comes from the DOCS_TOKEN environment variable
+        type: boolean
+      host:
+        type: string
+      ifaces:
+        type: string
+      influxAddr:
+        type: string
+      influxBucket:
+        type: string
+      influxEnable:
+        description: InfluxDB
+        type: boolean
+      influxOrg:
+        type: string
+      influxSkipTLS:
+        type: boolean
+      influxToken:
+        type: string
+      logLevel:
+        type: string
+      nameMDNS:
+        description: ask hosts for their own name over mDNS
+        type: boolean
+      nameNetBIOS:
+        description: ask hosts for their own name over NetBIOS
+        type: boolean
+      nodePath:
+        type: string
+      pgconnect:
+        type: string
+      port:
+        type: string
+      portInterval:
+        description: minutes between scheduled scans
+        type: integer
+      portList:
+        description: '"top", "all" or "22,80,8000-8100"'
+        type: string
+      portScan:
+        description: Port scanning
+        type: boolean
+      portTimeout:
+        description: milliseconds to wait for each port
+        type: integer
+      portWorkers:
+        description: ports checked at once per host
+        type: integer
+      prometheusEnable:
+        description: Prometheus
+        type: boolean
+      shoutURL:
+        type: string
+      startPage:
+        description: 'Page shown at /: "" for the network map, or "/view/auto", "/view/ID",
+          "/hosts", "/stats", "/bookmarks"'
+        type: string
+      statsDays:
+        description: days of uptime and utilization stats to keep
+        type: integer
+      theme:
+        type: string
+      timeout:
+        type: integer
+      trimHist:
+        type: integer
+      useDB:
+        description: PostgreSQL
+        type: string
+      version:
+        type: string
+    type: object
+  models.Connector:
+    properties:
+      enabled:
+        type: boolean
+      hasToken:
+        type: boolean
+      hostIP:
+        description: 'docker: IP of the host running Docker, if not the URL''s'
+        type: string
+      id:
+        type: integer
+      insecure:
+        description: accept self-signed certificates
+        type: boolean
+      interval:
+        description: minutes between syncs
+        type: integer
+      kind:
+        description: '"docker", "dockhand", "scanopy", "unifi", "technitium" or "proxmox"'
+        type: string
+      lastCount:
+        description: hosts the last sync matched
+        type: integer
+      lastError:
+        type: string
+      lastSync:
+        type: string
+      name:
+        type: string
+      site:
+        description: UniFi site, Dockhand environment; "" for all
+        type: string
+      url:
+        type: string
+      user:
+        description: for sources that log in with a user name
+        type: string
+    type: object
+  models.ConnectorSave:
+    properties:
+      clearToken:
+        type: boolean
+      enabled:
+        type: boolean
+      hasToken:
+        type: boolean
+      hostIP:
+        description: 'docker: IP of the host running Docker, if not the URL''s'
+        type: string
+      id:
+        type: integer
+      insecure:
+        description: accept self-signed certificates
+        type: boolean
+      interval:
+        description: minutes between syncs
+        type: integer
+      kind:
+        description: '"docker", "dockhand", "scanopy", "unifi", "technitium" or "proxmox"'
+        type: string
+      lastCount:
+        description: hosts the last sync matched
+        type: integer
+      lastError:
+        type: string
+      lastSync:
+        type: string
+      name:
+        type: string
+      site:
+        description: UniFi site, Dockhand environment; "" for all
+        type: string
+      token:
+        type: string
+      url:
+        type: string
+      user:
+        description: for sources that log in with a user name
+        type: string
+    type: object
+  models.Container:
+    properties:
+      category:
+        type: string
+      cid:
+        description: container ID
+        type: string
+      connectorID:
+        type: integer
+      host:
+        type: string
+      icon:
+        description: icon suggestion from the image name
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      ip:
+        description: IP of the Docker host
+        type: string
+      mac:
+        description: host it runs on, "" if that host is not known
+        type: string
+      name:
+        type: string
+      ports:
+        items:
+          $ref: '#/definitions/models.ContainerPort'
+        type: array
+      project:
+        description: compose project
+        type: string
+      state:
+        description: '"running", "exited"...'
+        type: string
+      status:
+        type: string
+    type: object
+  models.ContainerPort:
+    properties:
+      ip:
+        type: string
+      private:
+        type: integer
+      proto:
+        type: string
+      public:
+        description: 0 when not published on the host
+        type: integer
+    type: object
+  models.DayCount:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+    type: object
+  models.DayUptime:
+    properties:
+      date:
+        type: string
+      online:
+        type: integer
+      scans:
+        type: integer
+    type: object
+  models.Guest:
+    properties:
+      connectorID:
+        type: integer
+      cpus:
+        type: integer
+      hostMac:
+        description: the guest's own host, "" if not discovered
+        type: string
+      id:
+        type: integer
+      ip:
+        description: if the hypervisor knows it
+        type: string
+      mac:
+        description: first NIC, lower case
+        type: string
+      maxMem:
+        description: bytes
+        type: integer
+      name:
+        type: string
+      node:
+        description: hypervisor node name
+        type: string
+      nodeMac:
+        description: the node's host, "" if not known
+        type: string
+      status:
+        description: '"running", "stopped"...'
+        type: string
+      tags:
+        description: as set in the hypervisor, ";" separated
+        type: string
+      type:
+        description: '"qemu" (VM) or "lxc"'
+        type: string
+      uptime:
+        description: seconds
+        type: integer
+      vmid:
+        type: integer
+    type: object
+  models.Host:
+    properties:
+      date:
+        type: string
+      dns:
+        type: string
+      hw:
+        type: string
+      id:
+        type: integer
+      iface:
+        type: string
+      ip:
+        type: string
+      known:
+        type: integer
+      mac:
+        type: string
+      name:
+        type: string
+      now:
+        type: integer
+    type: object
+  models.HostCategory:
+    properties:
+      category:
+        type: string
+      mac:
+        type: string
+    type: object
+  models.HostPorts:
+    properties:
+      job:
+        $ref: '#/definitions/models.PortJob'
+      lastScan:
+        $ref: '#/definitions/models.PortScan'
+      ports:
+        items:
+          $ref: '#/definitions/models.Port'
+        type: array
+    type: object
+  models.HostUptime:
+    properties:
+      before:
+        description: FirstSeen is the earliest record, the host may be older
+        type: boolean
+      days:
+        items:
+          $ref: '#/definitions/models.DayUptime'
+        type: array
+      firstSeen:
+        type: string
+      host:
+        $ref: '#/definitions/models.Host'
+      online:
+        type: integer
+      scans:
+        type: integer
+      uptime:
+        description: percent of scans online, -1 when there are no scans
+        format: float64
+        type: number
+    type: object
+  models.IPAM:
+    properties:
+      addresses:
+        description: empty when the subnet is larger than the grid limit
+        items:
+          $ref: '#/definitions/models.Address'
+        type: array
+      stat:
+        $ref: '#/definitions/models.SubnetStat'
+    type: object
+  models.Icon:
+    properties:
+      icon:
+        type: string
+      mac:
+        type: string
+      port:
+        type: integer
+    type: object
+  models.Item:
+    properties:
+      bookmark:
+        description: bookmark ID
+        type: integer
+      icon:
+        description: unused since bookmarks; hosts and services use the icons table
+        type: string
+      id:
+        type: integer
+      kind:
+        description: '"host", "service" or "bookmark" ("link" before bookmarks existed)'
+        type: string
+      mac:
+        description: host and service
+        type: string
+      name:
+        description: optional for host and service
+        type: string
+      port:
+        description: service
+        type: integer
+      sort:
+        type: integer
+      tag:
+        type: string
+      url:
+        description: overrides where a host or service tile goes
+        type: string
+    type: object
+  models.Map:
+    properties:
+      hosts:
+        items:
+          $ref: '#/definitions/models.MapHost'
+        type: array
+      subnets:
+        items:
+          $ref: '#/definitions/models.Subnet'
+        type: array
+    type: object
+  models.MapHost:
+    properties:
+      bookmarks:
+        description: bookmarks linked to this host or its services
+        items:
+          $ref: '#/definitions/models.Bookmark'
+        type: array
+      category:
+        description: chosen category, or the suggested one, see package category
+        type: string
+      containers:
+        items:
+          $ref: '#/definitions/models.Container'
+        type: array
+      date:
+        type: string
+      dns:
+        type: string
+      guestOf:
+        allOf:
+        - $ref: '#/definitions/models.Guest'
+        description: set when this host is a VM or LXC on a known hypervisor
+      guests:
+        description: VMs and LXCs when this host is a hypervisor node
+        items:
+          $ref: '#/definitions/models.Guest'
+        type: array
+      hasPos:
+        description: 'false: the map places the host automatically'
+        type: boolean
+      hw:
+        type: string
+      icon:
+        description: icon set for the host, "" if none
+        type: string
+      id:
+        type: integer
+      iface:
+        type: string
+      ip:
+        type: string
+      known:
+        type: integer
+      mac:
+        type: string
+      name:
+        type: string
+      now:
+        type: integer
+      subnetID:
+        description: 0 when the host is in no configured subnet
+        type: integer
+      suggested:
+        description: true when Category is a suggestion, not chosen
+        type: boolean
+      web:
+        description: open ports that serve a web page
+        items:
+          $ref: '#/definitions/models.Port'
+        type: array
+      x:
+        format: float64
+        type: number
+      "y":
+        format: float64
+        type: number
+    type: object
+  models.MapPos:
+    properties:
+      mac:
+        type: string
+      x:
+        type: number
+      "y":
+        type: number
+    type: object
+  models.Port:
+    properties:
+      category:
+        description: category the connector gave the service
+        type: string
+      container:
+        description: container publishing the port
+        type: string
+      first:
+        type: string
+      id:
+        type: integer
+      ip:
+        type: string
+      last:
+        type: string
+      mac:
+        type: string
+      port:
+        type: integer
+      service:
+        type: string
+      source:
+        description: Set when a connector reported this port
+        type: integer
+      title:
+        description: title of the web page on this port, if any
+        type: string
+      web:
+        description: '"http", "https" or ""'
+        type: string
+    type: object
+  models.PortJob:
+    properties:
+      done:
+        type: integer
+      finished:
+        type: string
+      hostID:
+        type: integer
+      list:
+        type: string
+      open:
+        type: integer
+      running:
+        type: boolean
+      started:
+        type: string
+      total:
+        type: integer
+    type: object
+  models.PortScan:
+    properties:
+      date:
+        type: string
+      list:
+        type: string
+      mac:
+        type: string
+    type: object
+  models.Stat:
+    properties:
+      known:
+        type: integer
+      offline:
+        type: integer
+      online:
+        type: integer
+      total:
+        type: integer
+      unknown:
+        type: integer
+    type: object
+  models.Stats:
+    properties:
+      all:
+        items:
+          $ref: '#/definitions/models.TrendPoint'
+        type: array
+      bucket:
+        description: '"hour" or "day"'
+        type: string
+      days:
+        type: integer
+      from:
+        description: first day included
+        type: string
+      hosts:
+        items:
+          $ref: '#/definitions/models.HostUptime'
+        type: array
+      newHosts:
+        items:
+          $ref: '#/definitions/models.DayCount'
+        type: array
+      subnets:
+        items:
+          $ref: '#/definitions/models.SubnetTrend'
+        type: array
+    type: object
+  models.Subnet:
+    properties:
+      cidr:
+        type: string
+      id:
+        type: integer
+      iface:
+        type: string
+      method:
+        description: '"arp" or "none"'
+        type: string
+      name:
+        type: string
+      reserved:
+        description: comma separated IPs and ranges (a-b)
+        type: string
+      skipPorts:
+        description: leave hosts here out of scheduled port scans
+        type: boolean
+    type: object
+  models.SubnetStat:
+    properties:
+      free:
+        type: integer
+      nextFree:
+        type: string
+      offline:
+        description: seen before, not online now
+        type: integer
+      online:
+        type: integer
+      reserved:
+        description: reserved and not in use
+        type: integer
+      subnet:
+        $ref: '#/definitions/models.Subnet'
+      total:
+        description: usable addresses
+        type: integer
+      utilization:
+        description: percent of usable addresses not free
+        type: integer
+    type: object
+  models.SubnetTrend:
+    properties:
+      now:
+        $ref: '#/definitions/models.SubnetStat'
+      points:
+        items:
+          $ref: '#/definitions/models.TrendPoint'
+        type: array
+      subnet:
+        $ref: '#/definitions/models.Subnet'
+    type: object
+  models.TagCount:
+    properties:
+      count:
+        type: integer
+      tag:
+        type: string
+    type: object
+  models.TrendPoint:
+    properties:
+      online:
+        format: float64
+        type: number
+      time:
+        description: '"2006-01-02 15" for hours, "2006-01-02" for days'
+        type: string
+      total:
+        type: integer
+      used:
+        format: float64
+        type: number
+    type: object
+  models.View:
+    properties:
+      id:
+        type: integer
+      layout:
+        description: '"tiles" or "map"'
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      tags:
+        description: groups in order, comma separated; empty shows every tag
+        type: string
+    type: object
+  models.ViewData:
+    properties:
+      groups:
+        items:
+          $ref: '#/definitions/models.ViewGroup'
+        type: array
+      view:
+        $ref: '#/definitions/models.View'
+    type: object
+  models.ViewGroup:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.ViewItem'
+        type: array
+      tag:
+        type: string
+    type: object
+  models.ViewItem:
+    properties:
+      bookmark:
+        description: bookmark ID
+        type: integer
+      host:
+        $ref: '#/definitions/models.MapHost'
+      icon:
+        description: unused since bookmarks; hosts and services use the icons table
+        type: string
+      id:
+        type: integer
+      kind:
+        description: '"host", "service" or "bookmark" ("link" before bookmarks existed)'
+        type: string
+      link:
+        description: where clicking the tile goes ("" opens host details)
+        type: string
+      mac:
+        description: host and service
+        type: string
+      name:
+        description: optional for host and service
+        type: string
+      port:
+        description: service
+        type: integer
+      sort:
+        type: integer
+      status:
+        description: '"up", "down" or "unknown"'
+        type: string
+      subtitle:
+        type: string
+      tag:
+        type: string
+      title:
+        type: string
+      url:
+        description: overrides where a host or service tile goes
+        type: string
+    type: object
+  portscan.KnownPort:
+    properties:
+      port:
+        type: integer
+      service:
+        type: string
+    type: object
+info:
+  contact:
+    url: https://github.com/vipthomps/Gimle
+  description: 'Home lab dashboard: network discovery, a map of hosts, bookmarks,
+    views and docs'
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Gimlé API
+  version: 1.0.0
+paths:
+  /all:
+    get:
+      description: Retrieve all hosts from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Host'
+            type: array
+      summary: Get all hosts
+      tags:
+      - hosts
+  /backups:
+    get:
+      description: Copies of the database and settings, newest first. They stay in
+        the data folder and are never offered for download, since they hold connector
+        and docs tokens.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.backupList'
+      summary: Saved backups
+      tags:
+      - backups
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/backup.Backup'
+      summary: Back up now
+      tags:
+      - backups
+  /backups/{name}/restore:
+    post:
+      description: Puts back the database and settings, keeping the address and port
+        in use. The current state is backed up first, so a restore can be undone.
+      parameters:
+      - description: Backup file name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Restore a backup
+      tags:
+      - backups
+  /bookmarks:
+    get:
+      description: Addresses added by hand, with their tags and the host they are
+        linked to
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BookmarkInfo'
+            type: array
+      summary: List bookmarks
+      tags:
+      - bookmarks
+    post:
+      consumes:
+      - application/json
+      description: ID 0 creates one. URL must be http(s). Mac links it to a host,
+        Port to one of its services. Tags replace the bookmark's tags.
+      parameters:
+      - description: Bookmark with tags
+        in: body
+        name: bookmark
+        required: true
+        schema:
+          $ref: '#/definitions/api.bookmarkInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Bookmark'
+      summary: Create or update a bookmark
+      tags:
+      - bookmarks
+  /bookmarks/{id}:
+    delete:
+      description: Also removes it from every group it was tagged into
+      parameters:
+      - description: Bookmark ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a bookmark
+      tags:
+      - bookmarks
+  /categories:
+    get:
+      description: Categories Gimlé suggests for hosts and services, in display order
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Suggested categories
+      tags:
+      - map
+  /categories/host:
+    post:
+      consumes:
+      - application/json
+      description: Category is one of GET /categories, or "" to go back to the suggested
+        one
+      parameters:
+      - description: Host category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.HostCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HostCategory'
+      summary: Choose a host's category
+      tags:
+      - map
+  /config:
+    get:
+      description: Returns the current configuration used by the app
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Conf'
+      summary: Get application configuration
+      tags:
+      - system
+  /config/docs:
+    post:
+      consumes:
+      - application/json
+      description: An empty Token keeps the saved one; ClearToken removes it. The
+        token is never sent back.
+      parameters:
+      - description: Docs settings
+        in: body
+        name: docs
+        required: true
+        schema:
+          $ref: '#/definitions/api.docsSettings'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.docsIndex'
+      summary: Choose where docs come from
+      tags:
+      - docs
+  /config/start:
+    post:
+      consumes:
+      - application/json
+      description: Page is "" for the network map, or "/view/auto", "/view/ID", "/hosts",
+        "/stats" or "/bookmarks"
+      parameters:
+      - description: Start page
+        in: body
+        name: start
+        required: true
+        schema:
+          properties:
+            Page:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Choose the page shown at /
+      tags:
+      - system
+  /connectors:
+    get:
+      description: Docker, Dockhand, Scanopy, UniFi and Technitium sources. Tokens
+        are never returned.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Connector'
+            type: array
+      summary: List connectors
+      tags:
+      - connectors
+    post:
+      consumes:
+      - application/json
+      description: ID 0 creates one. An empty Token keeps the saved token; ClearToken
+        removes it.
+      parameters:
+      - description: Connector
+        in: body
+        name: connector
+        required: true
+        schema:
+          $ref: '#/definitions/models.ConnectorSave'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Connector'
+      summary: Create or update a connector
+      tags:
+      - connectors
+  /connectors/{id}:
+    delete:
+      description: Also removes the containers and ports it reported
+      parameters:
+      - description: Connector ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a connector
+      tags:
+      - connectors
+  /connectors/{id}/sync:
+    post:
+      description: Waits for the sync and returns the connector with its result
+      parameters:
+      - description: Connector ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Connector'
+      summary: Sync a connector now
+      tags:
+      - connectors
+  /connectors/kinds:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              $ref: '#/definitions/connectors.KindInfo'
+            type: object
+      summary: Connector kinds
+      tags:
+      - connectors
+  /containers:
+    get:
+      description: Containers the connectors reported, optionally for one host
+      parameters:
+      - description: Host MAC
+        in: query
+        name: mac
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Container'
+            type: array
+      summary: Containers
+      tags:
+      - connectors
+  /docs:
+    get:
+      description: Pages in the docs folder of the configured GitHub repository, following
+        its mkdocs.yml nav when there is one. Repo is "" until docs are set up.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.docsIndex'
+      summary: The docs menu
+      tags:
+      - docs
+  /docs/file:
+    get:
+      parameters:
+      - description: Path inside the docs folder
+        in: query
+        name: path
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: An image from the docs folder
+      tags:
+      - docs
+  /docs/page:
+    get:
+      description: Rendered HTML plus the Markdown and blob sha an edit starts from
+      parameters:
+      - description: Page path inside the docs folder, e.g. hosts/nas.md
+        in: query
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/docsource.Page'
+      summary: One docs page
+      tags:
+      - docs
+    post:
+      consumes:
+      - application/json
+      description: Needs editing turned on and a token that may write to the repository.
+        Answers 409 when the page changed on GitHub since Sha.
+      parameters:
+      - description: Page
+        in: body
+        name: page
+        required: true
+        schema:
+          $ref: '#/definitions/api.docSave'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/docsource.Page'
+      summary: Commit a docs page to GitHub
+      tags:
+      - docs
+  /docs/preview:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Page
+        in: body
+        name: page
+        required: true
+        schema:
+          properties:
+            Markdown:
+              type: string
+            Path:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              HTML:
+                type: string
+            type: object
+      summary: Render Markdown without saving it
+      tags:
+      - docs
+  /edit/{id}/{name}/{known}:
+    get:
+      description: Update a host's name and optionally toggle its "known" status
+      parameters:
+      - description: Host ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New name for the host
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Pass 'toggle' to flip the known/unknown status
+        in: path
+        name: known
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Edit host
+      tags:
+      - hosts
+  /history:
+    get:
+      description: Retrieve the complete history of all hosts. Not recommended, the
+        output can be a lot
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Host'
+            type: array
+      summary: Get full history
+      tags:
+      - history
+  /history/{mac}:
+    get:
+      description: Retrieve the latest history entries for a specific host by MAC
+        address
+      parameters:
+      - description: MAC address of the host
+        in: path
+        name: mac
+        required: true
+        type: string
+      - description: Number of history entries to return
+        in: query
+        name: num
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Host'
+            type: array
+      summary: Get history by MAC
+      tags:
+      - history
+  /history/{mac}/{date}:
+    get:
+      description: |-
+        Retrieve history for a specific host on a given date
+        The date format is flexible and can be:
+        - Year only: `2025`
+        - Year + month: `2025-09`
+        - Full date: `2025-09-06`
+        - Full timestamp: `2025-09-06 00:58:26`
+      parameters:
+      - description: MAC address of the host
+        in: path
+        name: mac
+        required: true
+        type: string
+      - description: Date filter (supports YYYY, YYYY-MM, YYYY-MM-DD, YYYY-MM-DD HH:mm:ss)
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Host'
+            type: array
+      summary: Get history by date
+      tags:
+      - history
+  /host/{id}:
+    get:
+      description: Retrieve detailed information about a host by its unique ID
+      parameters:
+      - description: Host ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Host'
+      summary: Get host by ID
+      tags:
+      - hosts
+  /host/add/{mac}:
+    get:
+      description: |-
+        Add host by MAC, with optional Name, IP, Hardware
+        Returns `models.Host` with this MAC form DB, either just added or existing
+      parameters:
+      - description: Host MAC
+        in: path
+        name: mac
+        required: true
+        type: string
+      - description: Name
+        in: query
+        name: name
+        type: string
+      - description: IP
+        in: query
+        name: ip
+        type: string
+      - description: Hardware
+        in: query
+        name: hw
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Host'
+      summary: Add host manually
+      tags:
+      - hosts
+  /host/del/{id}:
+    get:
+      description: Remove a host from the database by its unique ID
+      parameters:
+      - description: Host ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete host
+      tags:
+      - hosts
+  /icons:
+    post:
+      consumes:
+      - application/json
+      description: Port 0 is the host itself. Icon is a dashboard-icons name (e.g.
+        "immich"), an image URL, "none", or "" to go back to the default
+      parameters:
+      - description: Icon
+        in: body
+        name: icon
+        required: true
+        schema:
+          $ref: '#/definitions/models.Icon'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Icon'
+      summary: Set the icon of a host or service
+      tags:
+      - views
+  /items:
+    post:
+      consumes:
+      - application/json
+      description: Kind "host" needs Mac, "service" needs Mac and Port. Bookmarks
+        are tagged through /bookmarks
+      parameters:
+      - description: Item
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.Item'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Item'
+      summary: Create or update an item
+      tags:
+      - views
+  /items/{id}:
+    delete:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete an item
+      tags:
+      - views
+  /items/{id}/move:
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: -1 or 1
+        in: query
+        name: dir
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Move an item earlier or later within its tag
+      tags:
+      - views
+  /map:
+    get:
+      description: Subnets and hosts with their subnet, saved map position and web
+        services
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Map'
+      summary: Map data
+      tags:
+      - map
+  /map/pos:
+    delete:
+      description: Forget all saved positions so every host is placed automatically
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Reset the map layout
+      tags:
+      - map
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: MAC and position
+        in: body
+        name: pos
+        required: true
+        schema:
+          $ref: '#/definitions/models.MapPos'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Save a host's map position
+      tags:
+      - map
+  /notify_test:
+    get:
+      description: Trigger a test notification to verify notification settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Send test notification
+      tags:
+      - system
+  /port/{addr}/{port}:
+    get:
+      description: Check whether a given TCP port on an address is open or closed
+      parameters:
+      - description: IP address or hostname
+        in: path
+        name: addr
+        required: true
+        type: string
+      - description: Port number
+        in: path
+        name: port
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: true if open, false if closed
+          schema:
+            type: boolean
+      summary: Check port state
+      tags:
+      - network
+  /portlist/top:
+    get:
+      description: The ports a "top" port scan checks, with the service usually found
+        on each
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/portscan.KnownPort'
+            type: array
+      summary: Ports in the "top" list
+      tags:
+      - ports
+  /ports/{id}:
+    get:
+      description: Stored open ports, when the host was last scanned, and the progress
+        of a running scan
+      parameters:
+      - description: Host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HostPorts'
+      summary: Open ports of a host
+      tags:
+      - ports
+  /ports/{id}/scan:
+    post:
+      description: Scan a host in the background. Poll GET /ports/{id} for progress
+      parameters:
+      - description: Host ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: top (default), all, or a list like 22,80,8000-8100
+        in: query
+        name: list
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PortJob'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Start a port scan
+      tags:
+      - ports
+  /rescan:
+    get:
+      description: Manually trigger rescan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Rescan all interfaces now
+      tags:
+      - system
+  /stats:
+    get:
+      description: Online hosts and used addresses over time (hourly up to 7 days,
+        daily beyond), uptime per host, and new hosts per day
+      parameters:
+      - description: Days to look back, today included (default 30)
+        in: query
+        name: days
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Stats'
+      summary: Uptime and utilization stats
+      tags:
+      - stats
+  /stats/host/{mac}:
+    get:
+      parameters:
+      - description: Host MAC
+        in: path
+        name: mac
+        required: true
+        type: string
+      - description: Days to look back, today included (default 30)
+        in: query
+        name: days
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.HostUptime'
+      summary: Uptime of one host
+      tags:
+      - stats
+  /status/{iface}:
+    get:
+      description: Retrieve summary statistics of hosts, optionally filtered by interface
+      parameters:
+      - description: Interface name (omit for all interfaces)
+        in: path
+        name: iface
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Stat'
+      summary: Get network status
+      tags:
+      - system
+  /subnets:
+    get:
+      description: All configured subnets with their address usage
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.SubnetStat'
+            type: array
+      summary: List subnets
+      tags:
+      - subnets
+    post:
+      consumes:
+      - application/json
+      description: ID 0 creates a new subnet. Method is "arp" (scan with arp-scan)
+        or "none" (track addresses only)
+      parameters:
+      - description: Subnet
+        in: body
+        name: subnet
+        required: true
+        schema:
+          $ref: '#/definitions/models.Subnet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Subnet'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create or update a subnet
+      tags:
+      - subnets
+  /subnets/{id}:
+    delete:
+      parameters:
+      - description: Subnet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a subnet
+      tags:
+      - subnets
+  /subnets/{id}/ipam:
+    get:
+      description: Usage and the state of every address in a subnet (addresses omitted
+        above 4096)
+      parameters:
+      - description: Subnet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.IPAM'
+      summary: Subnet address map
+      tags:
+      - subnets
+  /subnets/detect:
+    get:
+      description: Suggest subnets from the IPv4 addresses on this machine's interfaces
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Subnet'
+            type: array
+      summary: Detect subnets
+      tags:
+      - subnets
+  /tags:
+    get:
+      description: Every tag with how many hosts, services and links carry it
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.TagCount'
+            type: array
+      summary: List tags
+      tags:
+      - views
+  /tags/host/{mac}:
+    get:
+      description: Tag items for a host and its services
+      parameters:
+      - description: Host MAC
+        in: path
+        name: mac
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Item'
+            type: array
+      summary: Tags on a host
+      tags:
+      - views
+  /tags/suggest/{mac}:
+    get:
+      parameters:
+      - description: Host MAC
+        in: path
+        name: mac
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: port number (0 for the host) -> category
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Suggested categories for a host and its web services
+      tags:
+      - map
+  /version:
+    get:
+      description: Returns the current running version of the application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get application version
+      tags:
+      - system
+  /views:
+    get:
+      description: Custom dashboard tabs in order
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.View'
+            type: array
+      summary: List views
+      tags:
+      - views
+    post:
+      consumes:
+      - application/json
+      description: ID 0 creates a view at the end. Layout is "tiles" or "map"
+      parameters:
+      - description: View
+        in: body
+        name: view
+        required: true
+        schema:
+          $ref: '#/definitions/models.View'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.View'
+      summary: Create or update a view
+      tags:
+      - views
+  /views/{id}:
+    delete:
+      description: Deletes the view only. Tags stay on hosts, services and links
+      parameters:
+      - description: View ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete a view
+      tags:
+      - views
+    get:
+      description: Items come with a title, a link and an up/down status
+      parameters:
+      - description: View ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ViewData'
+      summary: View with groups and items
+      tags:
+      - views
+  /views/{id}/move:
+    post:
+      parameters:
+      - description: View ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: -1 or 1
+        in: query
+        name: dir
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Move a view left or right
+      tags:
+      - views
+  /views/auto:
+    get:
+      description: Every web service, and every host without one, grouped by its suggested
+        category. Needs no tags.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ViewData'
+      summary: Suggested categories view
+      tags:
+      - views
+  /views/auto/apply:
+    post:
+      description: Tags every host and service that has no tag yet with its suggested
+        category, and adds a "Categories" view showing those tags. Existing tags are
+        left alone.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.View'
+      summary: Turn suggested categories into tags
+      tags:
+      - views
+  /wol/{mac}:
+    get:
+      description: Send a magic packet to wake up a host by its MAC address
+      parameters:
+      - description: MAC address of the host
+        in: path
+        name: mac
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: true if sent successfully
+          schema:
+            type: boolean
+      summary: Send Wake-on-LAN packet
+      tags:
+      - network
+swagger: "2.0"
