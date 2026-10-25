@@ -229,14 +229,31 @@ code {
     font-size: 11px;
     margin-top: 4px;
 }
-/* On a phone the sidebar becomes a bar you swipe along, so the page itself
-   still starts at the top of the screen */
+/* The menu button and page name only show on a phone */
+.gm-topline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.gm-here, .gm-menu-btn {
+    display: none;
+}
+.gm-navbody {
+    display: contents;
+}
+/* On a phone the sidebar becomes a slim bar along the top; the menu button
+   opens the links below it */
 @media (max-width: 767.98px) {
-    .gm-verse {
-        display: none;
-    }
     .gm-side {
-        gap: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+        padding: 8px 12px 8px 16px;
+        gap: 0;
+        overflow: visible;
+    }
+    .gm-verse, .gm-tagline, .gm-navtitle {
+        display: none;
     }
     .gm-brand {
         padding: 0;
@@ -244,31 +261,58 @@ code {
     .gm-wordmark {
         font-size: 21px;
     }
-    .gm-tagline {
+    .gm-here {
+        display: block;
+        flex: 1;
+        min-width: 0;
+        text-align: right;
+        color: var(--gm-muted);
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .gm-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+        color: var(--gm-text);
+        border: 0;
+    }
+    .gm-navbody {
         display: none;
     }
-    .gm-navtitle {
-        display: none;
-    }
-    .gm-navgroup {
-        flex-direction: row;
-        gap: 6px;
-        overflow-x: auto;
-        scrollbar-width: none;
-        padding-bottom: 2px;
-    }
-    .gm-navgroup::-webkit-scrollbar {
-        display: none;
+    /* the menu opens over the page, under the bar */
+    .gm-side.open .gm-navbody {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        padding: 10px 12px 12px;
+        background: var(--gm-bg);
+        border-bottom: 1px solid var(--gm-line);
+        box-shadow: 0 12px 24px rgb(0 0 0 / 0.35);
+        max-height: calc(100dvh - 64px);
+        overflow-y: auto;
     }
     .gm-navlink {
-        flex: none;
-        padding: 8px 12px;
-        background: var(--gm-surface);
-        border: 1px solid var(--gm-line);
-        white-space: nowrap;
+        min-height: 44px;
+        font-size: 15px;
     }
     .gm-sidefoot {
         margin-top: 0;
+        border-top: 1px solid var(--gm-line);
+        padding-top: 10px;
+    }
+    /* iOS zooms the whole page into any field under 16px when it is tapped */
+    .form-control, .form-select {
+        font-size: 16px;
     }
 }
 

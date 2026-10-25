@@ -1,4 +1,4 @@
-import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, createSignal, For, on as track, onCleanup, onMount, Show } from "solid-js";
 import { appConfig, setAppConfig } from "../functions/exports";
 import { apiGetConfig } from "../functions/api";
 import { views, reloadViews } from "./Views/ViewTabs";
@@ -36,6 +36,9 @@ const below = [
 function Header() {
 
   const [here, setHere] = createSignal(location.pathname);
+  // On a phone the links fold away behind a menu button
+  const [open, setOpen] = createSignal(false);
+  createEffect(track(here, () => setOpen(false), { defer: true }));
 
   // Bootstrap goes at the top of <head>, ahead of the app's own stylesheet, so
   // theme.css can restyle its components instead of being overruled by them.
@@ -79,14 +82,22 @@ function Header() {
   const on = (href: string) => href == "/" ? here() == "/" : here().startsWith(href);
 
   return (
-    <nav class="gm-side" aria-label="Main">
-      <a class="gm-brand" href="/">
-        <span style="color: var(--gm-accent)"><Mark size={32}></Mark></span>
-        <span>
-          <span class="gm-wordmark d-block">Gimlé</span>
-          <span class="gm-tagline">the hall under the gold roof</span>
-        </span>
-      </a>
+    <nav class={"gm-side" + (open() ? " open" : "")} aria-label="Main">
+      <div class="gm-topline">
+        <a class="gm-brand" href="/">
+          <span style="color: var(--gm-accent)"><Mark size={32}></Mark></span>
+          <span>
+            <span class="gm-wordmark d-block">Gimlé</span>
+            <span class="gm-tagline">the hall under the gold roof</span>
+          </span>
+        </a>
+        <span class="gm-here">{[...main, ...below].find(m => on(m.href))?.label ?? views().find(v => here() == "/view/" + v.ID)?.Name ?? ""}</span>
+        <button class="btn gm-menu-btn" type="button" aria-label="Menu" aria-expanded={open()} aria-controls="gm-navbody"
+          onClick={() => setOpen(!open())}>
+          <i class={"bi " + (open() ? "bi-x-lg" : "bi-list")}></i>
+        </button>
+      </div>
+      <div class="gm-navbody" id="gm-navbody" onClick={e => { if ((e.target as HTMLElement).closest("a")) setOpen(false); }}>
       <div class="gm-navgroup">
         <For each={main}>{m =>
           <a class={"gm-navlink" + (on(m.href) ? " active" : "")} href={m.href}><i class={"bi " + m.icon}></i>{m.label}</a>
@@ -112,6 +123,7 @@ function Header() {
           “A hall I see, fairer than the sun, roofed with gold, on Gimlé.”
           <small>After Völuspá 64: the hall that still stands after Ragnarök.</small>
         </p>
+      </div>
       </div>
     </nav>
   )
