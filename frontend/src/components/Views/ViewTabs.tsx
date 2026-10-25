@@ -59,7 +59,7 @@ function ViewTabs(props: { active: number }) {
       <li class="nav-item ms-auto">
         <button class={"nav-link start-toggle" + (isStart() ? " is-start" : "")} onClick={makeStart} disabled={isStart()}
           title={isStart() ? "This tab opens when you visit Gimlé" : "Open this tab when you visit Gimlé"}>
-          <i class={"bi " + (isStart() ? "bi-house-fill" : "bi-house")}></i><span class="ms-1">{isStart() ? "Start page" : "Make start page"}</span>
+          <i class={"bi " + (isStart() ? "bi-house-fill" : "bi-house")}></i><span class="ms-1 d-none d-md-inline">{isStart() ? "Start page" : "Make start page"}</span>
         </button>
       </li>
     </ul>

@@ -73,6 +73,7 @@ function MapPage() {
     let moved = false;
 
     const move = (ev: PointerEvent) => {
+      if (canvas!.pinching()) { setDragPos(undefined); return; }
       const m = canvas!.toMap(ev);
       const dx = m.x - start.x, dy = m.y - start.y;
       if (!moved && Math.abs(dx) + Math.abs(dy) < 4 / canvas!.scale()) return;
@@ -83,7 +84,10 @@ function MapPage() {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
       const d = dragPos();
-      if (moved && d) {
+      if (canvas!.pinching()) {
+        busy = false;
+        setDragPos(undefined);
+      } else if (moved && d) {
         await apiSaveMapPos(d.mac, d.x, d.y);
         busy = false;
         await load();

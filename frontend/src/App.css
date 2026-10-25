@@ -499,6 +499,10 @@ a.ip-cell:hover {
   padding: 0.5em 0;
   border-bottom: 1px solid var(--bs-border-color);
 }
+.connector-row > .me-auto {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .connector-row:last-child {
   border-bottom: none;
 }
@@ -628,4 +632,48 @@ a.ip-cell:hover {
 .bookmark-icon {
     width: 2.5rem;
     text-align: center;
+}
+
+/* Phones */
+@media (max-width: 767.98px) {
+  .map-wrap {
+    height: calc(100dvh - 320px);
+    min-height: 340px;
+  }
+  /* the host panel slides up from the bottom instead of covering the side */
+  .map-wrap .map-panel {
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-width: none;
+    max-height: 60%;
+  }
+  .map-wrap .map-zoom .btn {
+    padding: 8px 12px;
+  }
+  .gm-filter .form-select {
+    min-width: 6.5em;
+  }
+  .gm-filter .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* keep "Make this the start page" in reach while the tabs scroll */
+@media (max-width: 767.98px) {
+  .view-tabs > .nav-item.ms-auto {
+    position: sticky;
+    right: 0;
+    background: var(--gm-bg);
+  }
+}
+
+/* wide tables scroll sideways on a phone instead of wrapping every cell */
+@media (max-width: 767.98px) {
+  .table-responsive > .table td,
+  .table-responsive > .table th {
+    white-space: nowrap;
+  }
 }
